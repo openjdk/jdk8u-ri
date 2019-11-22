@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@ import java.util.jar.JarFile;
 import java.io.Console;
 import java.io.FileDescriptor;
 import java.security.ProtectionDomain;
+import java.security.Signature;
 
 import java.security.AccessController;
 
@@ -54,6 +55,7 @@ public class SharedSecrets {
     private static JavaSecurityAccess javaSecurityAccess;
     private static JavaUtilZipFileAccess javaUtilZipFileAccess;
     private static JavaAWTAccess javaAWTAccess;
+    private static JavaSecuritySignatureAccess javaSecuritySignatureAccess;
 
     public static JavaUtilJarAccess javaUtilJarAccess() {
         if (javaUtilJarAccess == null) {
@@ -174,5 +176,16 @@ public class SharedSecrets {
             return null;
         }
         return javaAWTAccess;
+    }
+
+    public static void setJavaSecuritySignatureAccess(JavaSecuritySignatureAccess jssa) {
+        javaSecuritySignatureAccess = jssa;
+    }
+
+    public static JavaSecuritySignatureAccess getJavaSecuritySignatureAccess() {
+        if (javaSecuritySignatureAccess == null) {
+            unsafe.ensureClassInitialized(Signature.class);
+        }
+        return javaSecuritySignatureAccess;
     }
 }
