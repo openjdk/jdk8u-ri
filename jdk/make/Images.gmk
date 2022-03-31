@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -577,8 +577,8 @@ $(foreach f,$(call CacheFind,$(JDK_OUTPUTDIR)/include), \
 # doc files
 
 ifdef OPENJDK
-  JRE_DOC_FILES := LICENSE ASSEMBLY_EXCEPTION THIRD_PARTY_README
-  JDK_DOC_FILES := LICENSE ASSEMBLY_EXCEPTION THIRD_PARTY_README
+  JRE_DOC_FILES := LICENSE ASSEMBLY_EXCEPTION THIRD_PARTY_README ADDITIONAL_LICENSE_INFO
+  JDK_DOC_FILES := LICENSE ASSEMBLY_EXCEPTION THIRD_PARTY_README ADDITIONAL_LICENSE_INFO
   JRE_DOC_LOCATION := $(JDK_TOPDIR)
   JDK_DOC_LOCATION := $(JDK_TOPDIR)
 else

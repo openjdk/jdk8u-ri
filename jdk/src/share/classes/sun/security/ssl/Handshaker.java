@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@ package sun.security.ssl;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.security.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.AccessController;
@@ -115,6 +116,20 @@ abstract class Handshaker {
     List<SNIServerName> serverNames = Collections.<SNIServerName>emptyList();
     Collection<SNIMatcher> sniMatchers = Collections.<SNIMatcher>emptyList();
 
+    // List of local ApplicationProtocols
+    String[] localApl = null;
+
+    // Negotiated ALPN value
+    String applicationProtocol = null;
+
+    // Application protocol callback function (for SSLEngine)
+    BiFunction<SSLEngine,List<String>,String>
+        appProtocolSelectorSSLEngine = null;
+
+    // Application protocol callback function (for SSLSocket)
+    BiFunction<SSLSocket,List<String>,String>
+        appProtocolSelectorSSLSocket = null;
+
     private boolean isClient;
     private boolean needCertVerify;
 
@@ -128,6 +143,10 @@ abstract class Handshaker {
     SSLContextImpl sslContext;
     RandomCookie clnt_random, svr_random;
     SSLSessionImpl session;
+
+    // Since this is for a Reference Implementation, only backporting a bit of
+    // the state machine improvement JDK-8074462.
+    boolean clientHelloDelivered;
 
     // current CipherSuite. Never null, initially SSL_NULL_WITH_NULL_NULL
     CipherSuite cipherSuite;
@@ -254,6 +273,7 @@ abstract class Handshaker {
         enableNewSession = true;
         invalidated = false;
         sessKeysCalculated = false;
+        clientHelloDelivered = false;
 
         setCipherSuite(CipherSuite.C_NULL);
         setEnabledProtocols(enabledProtocols);
@@ -480,6 +500,36 @@ abstract class Handshaker {
     void setSNIMatchers(Collection<SNIMatcher> sniMatchers) {
         // The sniMatchers parameter is unmodifiable.
         this.sniMatchers = sniMatchers;
+    }
+
+    /**
+     * Sets the Application Protocol list.
+     */
+    void setApplicationProtocols(String[] apl) {
+        this.localApl = apl;
+    }
+
+    /**
+     * Gets the "negotiated" ALPN value.
+     */
+    String getHandshakeApplicationProtocol() {
+        return applicationProtocol;
+    }
+
+    /**
+     * Sets the Application Protocol selector function for SSLEngine.
+     */
+    void setApplicationProtocolSelectorSSLEngine(
+        BiFunction<SSLEngine,List<String>,String> selector) {
+        this.appProtocolSelectorSSLEngine = selector;
+    }
+
+    /**
+     * Sets the Application Protocol selector function for SSLSocket.
+     */
+    void setApplicationProtocolSelectorSSLSocket(
+        BiFunction<SSLSocket,List<String>,String> selector) {
+        this.appProtocolSelectorSSLSocket = selector;
     }
 
     /**
@@ -945,6 +995,11 @@ abstract class Handshaker {
                 return;
             }
 
+            // Set the flags in the message receiving side.
+            if (messageType == HandshakeMessage.ht_client_hello) {
+                clientHelloDelivered = true;
+            }
+
             /*
              * Process the message.  We require
              * that processMessage() consumes the entire message.  In
@@ -986,7 +1041,8 @@ abstract class Handshaker {
      * Returns true iff the handshaker has sent any messages.
      */
     boolean started() {
-        return state >= 0;  // 0: HandshakeMessage.ht_hello_request
+        return (clientHelloDelivered ||
+            (state >= 0));  // 0: HandshakeMessage.ht_hello_request
                             // 1: HandshakeMessage.ht_client_hello
     }
 
