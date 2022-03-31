@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2014, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import java.security.AlgorithmConstraints;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiFunction;
 
 import javax.crypto.BadPaddingException;
 import javax.net.ssl.*;
@@ -217,6 +218,18 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
                                     Collections.<SNIServerName>emptyList();
     Collection<SNIMatcher>      sniMatchers =
                                     Collections.<SNIMatcher>emptyList();
+
+    // Configured application protocol values
+    String[] applicationProtocols = new String[0];
+
+    // Negotiated application protocol value.
+    //
+    // The value under negotiation will be obtained from handshaker.
+    String applicationProtocol = null;
+
+    // Callback function that selects the application protocol value during
+    // the SSL/TLS handshake.
+    BiFunction<SSLSocket, List<String>, String> applicationProtocolSelector;
 
     /*
      * READ ME * READ ME * READ ME * READ ME * READ ME * READ ME *
@@ -495,7 +508,8 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
             String identificationProtocol,
             AlgorithmConstraints algorithmConstraints,
             Collection<SNIMatcher> sniMatchers,
-            boolean preferLocalCipherSuites) throws IOException {
+            boolean preferLocalCipherSuites,
+            String[] applicationProtocols) throws IOException {
 
         super();
         doClientAuth = clientAuth;
@@ -504,6 +518,7 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
         this.algorithmConstraints = algorithmConstraints;
         this.sniMatchers = sniMatchers;
         this.preferLocalCipherSuites = preferLocalCipherSuites;
+        this.applicationProtocols = applicationProtocols;
         init(context, serverMode);
 
         /*
@@ -1063,6 +1078,9 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
                                         handshaker.isSecureRenegotiation();
                         clientVerifyData = handshaker.getClientVerifyData();
                         serverVerifyData = handshaker.getServerVerifyData();
+                        // set connection ALPN value
+                        applicationProtocol =
+                            handshaker.getHandshakeApplicationProtocol();
 
                         sess = handshaker.getSession();
                         handshakeSession = null;
@@ -1322,6 +1340,9 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
         }
         handshaker.setEnabledCipherSuites(enabledCipherSuites);
         handshaker.setEnableSessionCreation(enableSessionCreation);
+        handshaker.setApplicationProtocols(applicationProtocols);
+        handshaker.setApplicationProtocolSelectorSSLSocket(
+            applicationProtocolSelector);
     }
 
     /**
@@ -2532,6 +2553,7 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
         params.setSNIMatchers(sniMatchers);
         params.setServerNames(serverNames);
         params.setUseCipherSuitesOrder(preferLocalCipherSuites);
+        params.setApplicationProtocols(applicationProtocols);
 
         return params;
     }
@@ -2558,9 +2580,12 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
             sniMatchers = matchers;
         }
 
+        applicationProtocols = params.getApplicationProtocols();
+
         if ((handshaker != null) && !handshaker.started()) {
             handshaker.setIdentificationProtocol(identificationProtocol);
             handshaker.setAlgorithmConstraints(algorithmConstraints);
+            handshaker.setApplicationProtocols(applicationProtocols);
             if (roleIsServer) {
                 handshaker.setSNIMatchers(sniMatchers);
                 handshaker.setUseCipherSuitesOrder(preferLocalCipherSuites);
@@ -2576,6 +2601,34 @@ final public class SSLSocketImpl extends BaseSSLSocketImpl {
      */
     boolean receivedChangeCipherSpec() {
         return receivedCCS;
+    }
+
+    @Override
+    public synchronized String getApplicationProtocol() {
+        return applicationProtocol;
+    }
+
+    @Override
+    public synchronized String getHandshakeApplicationProtocol() {
+         if ((handshaker != null) && handshaker.started()) {
+            return handshaker.getHandshakeApplicationProtocol();
+        }
+        return null;
+    }
+
+    @Override
+    public synchronized void setHandshakeApplicationProtocolSelector(
+        BiFunction<SSLSocket, List<String>, String> selector) {
+        applicationProtocolSelector = selector;
+        if ((handshaker != null) && !handshaker.activated()) {
+            handshaker.setApplicationProtocolSelectorSSLSocket(selector);
+        }
+    }
+
+    @Override
+    public synchronized BiFunction<SSLSocket, List<String>, String>
+        getHandshakeApplicationProtocolSelector() {
+        return this.applicationProtocolSelector;
     }
 
     //

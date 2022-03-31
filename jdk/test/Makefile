@@ -1,5 +1,5 @@
 #
-# Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 1995, 2019, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -262,8 +262,8 @@ ifdef CONCURRENCY
   EXTRA_JTREG_OPTIONS += -concurrency:$(CONCURRENCY)
 endif
 
-# Default JTREG to run (win32 script works for everybody)
-JTREG = $(JT_HOME)/win32/bin/jtreg
+# Default JTREG to run
+JTREG = $(JT_HOME)/bin/jtreg
 # run in agentvm mode
 JTREG_BASIC_OPTIONS += -agentvm
 # Only run automatic tests
