@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -31,16 +31,18 @@ import java.util.Arrays;
 
 import java.security.*;
 import java.security.interfaces.*;
+import java.security.spec.AlgorithmParameterSpec;
 
+import sun.security.rsa.RSAUtil.KeyType;
 import sun.security.util.*;
 import sun.security.x509.AlgorithmId;
 
 /**
- * PKCS#1 RSA signatures with the various message digest algorithms.
+ * PKCS#1 v1.5 RSA signatures with the various message digest algorithms.
  * This file contains an abstract base class with all the logic plus
  * a nested static class for each of the message digest algorithms
  * (see end of the file). We support MD2, MD5, SHA-1, SHA-224, SHA-256,
- * SHA-384, and SHA-512.
+ * SHA-384, SHA-512, SHA-512/224, and SHA-512/256.
  *
  * @since   1.5
  * @author  Andreas Sterbenz
@@ -86,6 +88,7 @@ public abstract class RSASignature extends SignatureSpi {
     }
 
     // initialize for verification. See JCA doc
+    @Override
     protected void engineInitVerify(PublicKey publicKey)
             throws InvalidKeyException {
         RSAPublicKey rsaKey = (RSAPublicKey)RSAKeyFactory.toRSAKey(publicKey);
@@ -95,12 +98,14 @@ public abstract class RSASignature extends SignatureSpi {
     }
 
     // initialize for signing. See JCA doc
+    @Override
     protected void engineInitSign(PrivateKey privateKey)
             throws InvalidKeyException {
         engineInitSign(privateKey, null);
     }
 
     // initialize for signing. See JCA doc
+    @Override
     protected void engineInitSign(PrivateKey privateKey, SecureRandom random)
             throws InvalidKeyException {
         RSAPrivateKey rsaKey =
@@ -115,6 +120,11 @@ public abstract class RSASignature extends SignatureSpi {
      */
     private void initCommon(RSAKey rsaKey, SecureRandom random)
             throws InvalidKeyException {
+        try {
+            RSAUtil.checkParamsAgainstType(KeyType.RSA, rsaKey.getParams());
+        } catch (ProviderException e) {
+            throw new InvalidKeyException("Invalid key for RSA signatures", e);
+        }
         resetDigest();
         int keySize = RSACore.getByteLength(rsaKey);
         try {
@@ -149,12 +159,14 @@ public abstract class RSASignature extends SignatureSpi {
     }
 
     // update the signature with the plaintext data. See JCA doc
+    @Override
     protected void engineUpdate(byte b) throws SignatureException {
         md.update(b);
         digestReset = false;
     }
 
     // update the signature with the plaintext data. See JCA doc
+    @Override
     protected void engineUpdate(byte[] b, int off, int len)
             throws SignatureException {
         md.update(b, off, len);
@@ -162,18 +174,23 @@ public abstract class RSASignature extends SignatureSpi {
     }
 
     // update the signature with the plaintext data. See JCA doc
+    @Override
     protected void engineUpdate(ByteBuffer b) {
         md.update(b);
         digestReset = false;
     }
 
     // sign the data and return the signature. See JCA doc
+    @Override
     protected byte[] engineSign() throws SignatureException {
+        if (privateKey == null) {
+            throw new SignatureException("Missing private key");
+        }
         byte[] digest = getDigestValue();
         try {
             byte[] encoded = encodeSignature(digestOID, digest);
             byte[] padded = padding.pad(encoded);
-            byte[] encrypted = RSACore.rsa(padded, privateKey);
+            byte[] encrypted = RSACore.rsa(padded, privateKey, true);
             return encrypted;
         } catch (GeneralSecurityException e) {
             throw new SignatureException("Could not sign data", e);
@@ -183,18 +200,23 @@ public abstract class RSASignature extends SignatureSpi {
     }
 
     // verify the data and return the result. See JCA doc
+    // should be reset to the state after engineInitVerify call.
+    @Override
     protected boolean engineVerify(byte[] sigBytes) throws SignatureException {
-        if (sigBytes.length != RSACore.getByteLength(publicKey)) {
-            throw new SignatureException("Signature length not correct: got " +
+        if (publicKey == null) {
+            throw new SignatureException("Missing public key");
+        }
+        try {
+            if (sigBytes.length != RSACore.getByteLength(publicKey)) {
+                throw new SignatureException("Signature length not correct: got " +
                     sigBytes.length + " but was expecting " +
                     RSACore.getByteLength(publicKey));
-        }
-        byte[] digest = getDigestValue();
-        try {
+            }
+            byte[] digest = getDigestValue();
             byte[] decrypted = RSACore.rsa(sigBytes, publicKey);
             byte[] unpadded = padding.unpad(decrypted);
             byte[] decodedDigest = decodeSignature(digestOID, unpadded);
-            return Arrays.equals(digest, decodedDigest);
+            return MessageDigest.isEqual(digest, decodedDigest);
         } catch (javax.crypto.BadPaddingException e) {
             // occurs if the app has used the wrong RSA public key
             // or if sigBytes is invalid
@@ -203,6 +225,8 @@ public abstract class RSASignature extends SignatureSpi {
             return false;
         } catch (IOException e) {
             throw new SignatureException("Signature encoding error", e);
+        } finally {
+            resetDigest();
         }
     }
 
@@ -245,16 +269,33 @@ public abstract class RSASignature extends SignatureSpi {
 
     // set parameter, not supported. See JCA doc
     @Deprecated
+    @Override
     protected void engineSetParameter(String param, Object value)
             throws InvalidParameterException {
         throw new UnsupportedOperationException("setParameter() not supported");
     }
 
+    // See JCA doc
+    @Override
+    protected void engineSetParameter(AlgorithmParameterSpec params)
+            throws InvalidAlgorithmParameterException {
+        if (params != null) {
+            throw new InvalidAlgorithmParameterException("No parameters accepted");
+        }
+    }
+
     // get parameter, not supported. See JCA doc
     @Deprecated
+    @Override
     protected Object engineGetParameter(String param)
             throws InvalidParameterException {
         throw new UnsupportedOperationException("getParameter() not supported");
+    }
+
+    // See JCA doc
+    @Override
+    protected AlgorithmParameters engineGetParameters() {
+        return null;
     }
 
     // Nested class for MD2withRSA signatures
@@ -306,4 +347,17 @@ public abstract class RSASignature extends SignatureSpi {
         }
     }
 
+    // Nested class for SHA512/224withRSA signatures
+    public static final class SHA512_224withRSA extends RSASignature {
+        public SHA512_224withRSA() {
+            super("SHA-512/224", AlgorithmId.SHA512_224_oid, 11);
+        }
+    }
+
+    // Nested class for SHA512/256withRSA signatures
+    public static final class SHA512_256withRSA extends RSASignature {
+        public SHA512_256withRSA() {
+            super("SHA-512/256", AlgorithmId.SHA512_256_oid, 11);
+        }
+    }
 }
