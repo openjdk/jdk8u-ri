@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -1214,8 +1214,8 @@ AC_DEFUN_ONCE([TOOLCHAIN_SETUP_JTREG],
       # use JT_HOME enviroment var.
       BASIC_FIXUP_PATH([JT_HOME])
 
-      # jtreg win32 script works for everybody
-      JTREGEXE="$JT_HOME/win32/bin/jtreg"
+      # jtreg script works for everybody
+      JTREGEXE="$JT_HOME/bin/jtreg"
 
       if test ! -f "$JTREGEXE"; then
         AC_MSG_ERROR([JTReg executable does not exist: $JTREGEXE])

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2019, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -41,6 +41,7 @@ import sun.security.util.*;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.X500Name;
 import sun.security.x509.KeyUsageExtension;
+import sun.security.util.SignatureUtil;
 import sun.misc.HexDumpEncoder;
 
 /**
@@ -392,7 +393,16 @@ public class SignerInfo implements DerEncoder {
             }
 
             PublicKey key = cert.getPublicKey();
-            sig.initVerify(key);
+
+            AlgorithmParameters ap =
+                digestEncryptionAlgorithmId.getParameters();
+            try {
+                SignatureUtil.initVerifyWithParam(sig, key,
+                    SignatureUtil.getParamSpec(algname, ap));
+            } catch (ProviderException | InvalidAlgorithmParameterException |
+                     InvalidKeyException e) {
+                throw new SignatureException(e.getMessage(), e);
+            }
 
             sig.update(dataSigned);
 
@@ -403,17 +413,13 @@ public class SignerInfo implements DerEncoder {
         } catch (IOException e) {
             throw new SignatureException("IO error verifying signature:\n" +
                                          e.getMessage());
-
-        } catch (InvalidKeyException e) {
-            throw new SignatureException("InvalidKey: " + e.getMessage());
-
         }
         return null;
     }
 
     /* Verify the content of the pkcs7 block. */
     SignerInfo verify(PKCS7 block)
-    throws NoSuchAlgorithmException, SignatureException {
+            throws NoSuchAlgorithmException, SignatureException {
         return verify(block, null);
     }
 
