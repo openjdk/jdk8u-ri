@@ -3764,7 +3764,7 @@ fi
 
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -3872,7 +3872,7 @@ fi
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1416326200
+DATE_WHEN_GENERATED=1573688723
 
 ###############################################################################
 #
@@ -16790,8 +16790,8 @@ $as_echo "$as_me: The path of JT_HOME, which resolves as \"$path\", is invalid."
   fi
 
 
-      # jtreg win32 script works for everybody
-      JTREGEXE="$JT_HOME/win32/bin/jtreg"
+      # jtreg script works for everybody
+      JTREGEXE="$JT_HOME/bin/jtreg"
 
       if test ! -f "$JTREGEXE"; then
         as_fn_error $? "JTReg executable does not exist: $JTREGEXE" "$LINENO" 5
