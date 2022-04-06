@@ -3873,7 +3873,7 @@ fi
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1649266272
+DATE_WHEN_GENERATED=1650316525
 
 ###############################################################################
 #
@@ -7247,8 +7247,8 @@ $as_echo "$CYGWIN_VERSION" >&6; }
     WINDOWS_ENV_VENDOR='cygwin'
     WINDOWS_ENV_VERSION="$CYGWIN_VERSION"
 
-    CYGWIN_VERSION_OK=`$ECHO $CYGWIN_VERSION | $GREP ^1.7.`
-    if test "x$CYGWIN_VERSION_OK" = x; then
+    CYGWIN_VERSION_OLD=`$ECHO $CYGWIN_VERSION | $GREP -e '^1\.0-6'`
+    if test "x$CYGWIN_VERSION_OLD" != x; then
       { $as_echo "$as_me:${as_lineno-$LINENO}: Your cygwin is too old. You are running $CYGWIN_VERSION, but at least cygwin 1.7 is required. Please upgrade." >&5
 $as_echo "$as_me: Your cygwin is too old. You are running $CYGWIN_VERSION, but at least cygwin 1.7 is required. Please upgrade." >&6;}
       as_fn_error $? "Cannot continue" "$LINENO" 5
