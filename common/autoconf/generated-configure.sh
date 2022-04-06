@@ -832,6 +832,7 @@ DSYMUTIL
 IS_GNU_TIME
 TIME
 STAT
+GIT
 HG
 READELF
 OTOOL
@@ -3108,7 +3109,7 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 # Include these first...
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2022, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -3872,7 +3873,7 @@ fi
 #CUSTOM_AUTOCONF_INCLUDE
 
 # Do not change or remove the following line, it is needed for consistency checks:
-DATE_WHEN_GENERATED=1573688723
+DATE_WHEN_GENERATED=1649266272
 
 ###############################################################################
 #
@@ -10443,6 +10444,46 @@ HG=$ac_cv_path_HG
 if test -n "$HG"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $HG" >&5
 $as_echo "$HG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  # Extract the first word of "git", so it can be a program name with args.
+set dummy git; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_path_GIT+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $GIT in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_GIT="$GIT" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_GIT="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+GIT=$ac_cv_path_GIT
+if test -n "$GIT"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $GIT" >&5
+$as_echo "$GIT" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
