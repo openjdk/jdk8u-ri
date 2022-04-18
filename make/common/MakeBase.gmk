@@ -299,10 +299,13 @@ endef
 # These should not be := assignments, only used from the root Makefile.
 HG_VERSION = $(shell $(HG) version 2> /dev/null)
 HG_DIRECTORY=.hg
+GIT_DIRECTORY=.git
 HGTIP_FILENAME=.hgtip
 HG_SEARCH = ./REPO ./*/REPO ./*/*/REPO ./*/*/*/REPO
 REPO_LIST = $(patsubst ./%,%,$(patsubst %/,%,$(sort $(dir \
-    $(shell $(CD) $(SRC_ROOT) ; ( $(LS) -d $(HG_SEARCH:%/REPO=%/$(HG_DIRECTORY)) ; \
+    $(shell $(CD) $(SRC_ROOT) ; ( \
+        $(LS) -d $(HG_SEARCH:%/REPO=%/$(HG_DIRECTORY)) ; \
+        $(LS) -d $(HG_SEARCH:%/REPO=%/$(GIT_DIRECTORY)) ; \
         $(LS) $(HG_SEARCH:%/REPO=%/$(HGTIP_FILENAME)) ) \
         2> /dev/null)))))
 
@@ -315,6 +318,12 @@ define GetSourceTips
 	  elif [ -d $${i}/$(HG_DIRECTORY) -a "$(HG_VERSION)" != "" ] ; then \
 	    $(PRINTF) " %s:%s" \
 	        "$${i}" `$(HG) tip --repository $${i} --template '{node|short}\n'` ; \
+	  elif [ -d $${i}/$(GIT_DIRECTORY) -a "$(GIT)" != "" ] ; then \
+	    porcelain="`$(GIT) -C $${i} status --porcelain`" ; \
+	    $(PRINTF) " %s:%s%s\n" \
+	        "$${i}" \
+	        "`$(GIT) -C $${i} log -n1 --format=%H | $(CUT) -c1-12`" \
+	        "`if test -n \"$${porcelain}\"; then printf '+'; fi`" ; \
 	  elif [ -f $${i}/$(HGTIP_FILENAME) ] ; then \
 	    $(PRINTF) " %s:%s" \
 	        "$${i}" `$(CAT) $${i}/$(HGTIP_FILENAME)` ; \
@@ -325,7 +334,11 @@ endef
 
 # Create the HGTIP_FILENAME file. Called from jdk/make/closed/bundles.gmk
 define CreateHgTip
-	$(HG) tip --repository $1 --template '{node|short}\n' > $1/$(HGTIP_FILENAME); \
+	if [ -d $1/$(HG_DIRECTORY) -a "$(HG_VERSION)" != "" ] ; then \
+	  $(HG) tip --repository $1 --template '{node|short}\n' > $1/$(HGTIP_FILENAME); \
+	elif [ -d $1/$(GIT_DIRECTORY) -a "$(GIT)" != "" ] ; then \
+	  $(GIT) -C $1 log -n1 --format=%H | $(CUT) -c1-12 > $1/$(HGTIP_FILENAME); \
+	fi ; \
 	$(ECHO) $1/$(HGTIP_FILENAME)
 endef
 

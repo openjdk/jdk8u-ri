@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2022, Oracle and/or its affiliates. All rights reserved.
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 #
 # This code is free software; you can redistribute it and/or modify it
@@ -640,6 +640,7 @@ AC_DEFUN_ONCE([BASIC_SETUP_COMPLEX_TOOLS],
   fi
   AC_PATH_PROGS(READELF, [readelf greadelf])
   AC_PATH_PROG(HG, hg)
+  AC_PATH_PROG(GIT, git)
   AC_PATH_PROG(STAT, stat)
   AC_PATH_PROG(TIME, time)
   # Check if it's GNU time
