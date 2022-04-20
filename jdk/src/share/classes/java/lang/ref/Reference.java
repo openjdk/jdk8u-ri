@@ -245,6 +245,20 @@ public abstract class Reference<T> {
     }
 
 
+    /**
+     * Throws {@link CloneNotSupportedException}. A {@code Reference} cannot be
+     * meaningfully cloned. Construct a new {@code Reference} instead.
+     *
+     * @returns never returns normally
+     * @throws  CloneNotSupportedException always
+     *
+     * @since 8
+     */
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
     /* -- Constructors -- */
 
     Reference(T referent) {
