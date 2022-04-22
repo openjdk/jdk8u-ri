@@ -249,7 +249,9 @@ public abstract class Reference<T> {
      * Throws {@link CloneNotSupportedException}. A {@code Reference} cannot be
      * meaningfully cloned. Construct a new {@code Reference} instead.
      *
-     * @returns never returns normally
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 4.
+     *
+     * @return  never returns normally
      * @throws  CloneNotSupportedException always
      *
      * @since 8
