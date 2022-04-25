@@ -584,6 +584,7 @@ public abstract class Signature extends SignatureSpi {
      * supposed to be used for digital signatures, an
      * {@code InvalidKeyException} is thrown.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @param certificate the certificate of the identity whose signature is
      * going to be verified.
      * @param params the parameters used for verifying this signature.

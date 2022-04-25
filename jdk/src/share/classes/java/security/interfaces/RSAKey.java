@@ -56,6 +56,7 @@ public interface RSAKey {
      * explicitly specified or implicitly created during
      * key pair generation.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @implSpec
      * The default implementation returns {@code null}.
      *

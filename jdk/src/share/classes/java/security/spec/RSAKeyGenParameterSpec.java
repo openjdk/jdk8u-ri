@@ -70,6 +70,7 @@ public class RSAKeyGenParameterSpec implements AlgorithmParameterSpec {
      * Constructs a new {@code RSAKeyGenParameterSpec} object from the
      * given keysize, public-exponent value, and key parameters.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @param keysize the modulus size (specified in number of bits)
      * @param publicExponent the public exponent
      * @param keyParams the key parameters, may be null
@@ -103,6 +104,7 @@ public class RSAKeyGenParameterSpec implements AlgorithmParameterSpec {
     /**
      * Returns the parameters to be associated with key.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @return the associated parameters, may be null if
      *         not present
      * @since 8

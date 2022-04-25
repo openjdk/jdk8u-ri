@@ -81,6 +81,7 @@ public class RSAPrivateCrtKeySpec extends RSAPrivateKeySpec {
     * Creates a new {@code RSAPrivateCrtKeySpec} with additional
     * key parameters.
     *
+    * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
     * @param modulus the modulus n
     * @param publicExponent the public exponent e
     * @param privateExponent the private exponent d

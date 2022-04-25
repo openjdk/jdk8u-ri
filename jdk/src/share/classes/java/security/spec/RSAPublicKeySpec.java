@@ -60,6 +60,7 @@ public class RSAPublicKeySpec implements KeySpec {
     /**
      * Creates a new RSAPublicKeySpec with additional key parameters.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @param modulus the modulus
      * @param publicExponent the public exponent
      * @param params the parameters associated with this key, may be null
@@ -95,6 +96,7 @@ public class RSAPublicKeySpec implements KeySpec {
      * Returns the parameters associated with this key, may be null if not
      * present.
      *
+     * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
      * @return the parameters associated with this key
      * @since 8
      */
