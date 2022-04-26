@@ -763,8 +763,8 @@ public abstract class SSLSocket extends Socket
      * }</pre>
      *
      * @apiNote This method is defined in Java SE 8 Maintenance Release 3.
-     *
-     * It should be called by TLS server applications before the TLS
+     * <p>
+     * This method should be called by TLS server applications before the TLS
      * handshake begins. Also, this {@code SSLSocket} should be configured with
      * parameters that are compatible with the application protocol selected by
      * the callback function. For example, enabling a poor choice of cipher

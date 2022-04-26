@@ -96,6 +96,7 @@ public class PSSParameterSpec implements AlgorithmParameterSpec {
     /**
      * The {@code TrailerFieldBC} constant as defined in PKCS#1
      *
+     * @apiNote This field is defined in Java SE 8 Maintenance Release 3.
      * @since 8
      */
     public static final int TRAILER_FIELD_BC = 1;

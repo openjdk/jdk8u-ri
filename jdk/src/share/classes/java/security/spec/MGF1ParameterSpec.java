@@ -98,12 +98,18 @@ public class MGF1ParameterSpec implements AlgorithmParameterSpec {
 
     /**
      * The MGF1ParameterSpec which uses SHA-512/224 message digest
+     *
+     * @apiNote This field is defined in Java SE 8 Maintenance Release 3.
+     * @since 8
      */
     public static final MGF1ParameterSpec SHA512_224 =
         new MGF1ParameterSpec("SHA-512/224");
 
     /**
      * The MGF1ParameterSpec which uses SHA-512/256 message digest
+     *
+     * @apiNote This field is defined in Java SE 8 Maintenance Release 3.
+     * @since 8
      */
     public static final MGF1ParameterSpec SHA512_256 =
         new MGF1ParameterSpec("SHA-512/256");
