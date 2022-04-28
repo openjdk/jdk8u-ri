@@ -309,6 +309,15 @@ $(BEANLESS_CLASSES)/%: $(JDK_OUTPUTDIR)/classes/%
 	$(MKDIR) -p $(@D)
 	$(TOOL_REMOVEMETHODS) '$<' $@ addPropertyChangeListener removePropertyChangeListener
 
+# Code these targets explicitly because the target "%" expansion does
+# not work with the inline "$" in the file name.
+$(BEANLESS_CLASSES)/java/util/jar/Pack200\$$Packer.class: $(JDK_OUTPUTDIR)/classes/java/util/jar/Pack200$$Packer.class
+	$(MKDIR) -p $(@D)
+	$(TOOL_REMOVEMETHODS) '$<' $@ addPropertyChangeListener removePropertyChangeListener
+ $(BEANLESS_CLASSES)/java/util/jar/Pack200\$$Unpacker.class: $(JDK_OUTPUTDIR)/classes/java/util/jar/Pack200$$Unpacker.class
+	$(MKDIR) -p $(@D)
+	$(TOOL_REMOVEMETHODS) '$<' $@ addPropertyChangeListener removePropertyChangeListener
+
 CLASSES_TO_DEBEAN = \
     java/util/logging/LogManager.class \
     java/util/jar/Pack200\$$Packer.class \
