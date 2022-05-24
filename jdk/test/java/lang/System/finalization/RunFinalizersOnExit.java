@@ -23,7 +23,7 @@
 
 /*
  * @test
- * @bug
+ * @bug 8287132
  * @summary Ensure that System.runFinalizersOnExit throws
  *          UnsupportedOperationException
  */
