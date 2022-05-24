@@ -30,18 +30,17 @@
 public class RunFinalizersOnExit {
     public static void main(String[] args) {
         try {
-            System.runFinalizationOnExit(true);
+            System.runFinalizersOnExit(true);
             throw new Error("UnsupportedOperationException was not thrown");
         }
         catch (UnsupportedOperationException expected) {
         }
 
         try {
-            System.runFinalizationOnExit(false);
+            System.runFinalizersOnExit(false);
             throw new Error("UnsupportedOperationException was not thrown");
         }
         catch (UnsupportedOperationException expected) {
         }
-
     }
 }
