@@ -1032,7 +1032,7 @@ public final class System {
     /**
      * Throws {@code UnsupportedOperationException}.
      *
-     * The call {@code System.runFinalizersOnExit()} is effectively
+     * <p>The call {@code System.runFinalizersOnExit()} is effectively
      * equivalent to the call:
      * <blockquote><pre>
      * Runtime.runFinalizersOnExit()
