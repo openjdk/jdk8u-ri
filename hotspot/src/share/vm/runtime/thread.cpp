@@ -3942,7 +3942,7 @@ void JavaThread::invoke_shutdown_hooks() {
 //   + Wait until we are the last non-daemon thread to execute
 //     <-- every thing is still working at this moment -->
 //   + Call java.lang.Shutdown.shutdown(), which will invoke Java level
-//        shutdown hooks, run finalizers if finalization-on-exit
+//        shutdown hooks
 //   + Call before_exit(), prepare for VM exit
 //      > run VM level shutdown hooks (they are registered through JVM_OnExit(),
 //        currently the only user of this mechanism is File.deleteOnExit())
