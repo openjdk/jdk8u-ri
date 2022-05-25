@@ -139,7 +139,7 @@ class Shutdown {
         // set shutdown state
         // Synchronization is for visibility; only one thread
         // can ever get here.
-        synchronized(lock) {
+        synchronized (lock) {
             isShutdown = true;
         }
     }
