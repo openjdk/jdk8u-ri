@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -49,10 +49,42 @@ import java.util.Locale;
  * and general category for every defined Unicode code point or
  * character range.
  * <p>
- * The file and its description are available from the Unicode Consortium at:
- * <ul>
- * <li><a href="http://www.unicode.org">http://www.unicode.org</a>
- * </ul>
+ * The Java SE 8 Platform uses character information from version 6.2
+ * of the Unicode Standard, with three extensions. First, in recognition of the fact
+ * that new currencies appear frequently, the Java SE 8 Platform allows an
+ * implementation of class {@code Character} to use the Currency Symbols
+ * block from version 10.0 of the Unicode Standard. Second, the Java SE 8 Platform
+ * allows an implementation of class {@code Character} to use the code points
+ * in the range of {@code U+9FCD} to {@code U+9FEF} from version 11.0 of the
+ * Unicode Standard, in order for the class to allow the "Implementation
+ * Level 1" of the Chinese GB18030-2022 standard. Third, the Java SE 8 Platform
+ * allows an implementation of class {@code Character} to use the Japanese Era
+ * code point, {@code U+32FF}, from the Unicode Standard version 12.1.
+ * Consequently, the
+ * behavior of fields and methods of class {@code Character} may vary across
+ * implementations of the Java SE 8 Platform when processing the aforementioned
+ * code points ( outside of version 6.2 ), except for the following methods
+ * that define Java identifiers:
+ * {@link #isJavaIdentifierStart(int)}, {@link #isJavaIdentifierStart(char)},
+ * {@link #isJavaIdentifierPart(int)}, and {@link #isJavaIdentifierPart(char)}.
+ * Code points in Java identifiers must be drawn from version 6.2 of
+ * the Unicode Standard. The Java SE 8 Platform allows an implementation
+ * of class {@code Character} to use the following code points:
+ * <table class="striped">
+ * <caption style="display:none">Allowed code points with extensions</caption>
+ * <thead>
+ * <tr><th scope="col">Unicode version</th>
+ *     <th scope="col">Allowed code points</th></tr>
+ * </thead>
+ * <tbody>
+ * <tr><th scope="row" style="text-align:left">Unicode 10.0</th>
+ *     <td>{@code U+20BB} to {@code U+20BF} (Currency Symbols)</td></tr>
+ * <tr><th scope="row" style="text-align:left">Unicode 11.0</th>
+ *     <td>{@code U+9FCD} to {@code U+9FEF} (GB18030-2022 Implementation Level 1)</td></tr>
+ * <tr><th scope="row" style="text-align:left">Unicode 12.1</th>
+ *     <td>{@code U+32FF} (Japanese Era)</td></tr>
+ * </tbody>
+ * </table>
  *
  * <h3><a name="unicode">Unicode Character Representations</a></h3>
  *
