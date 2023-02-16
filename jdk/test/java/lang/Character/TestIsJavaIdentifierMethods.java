@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2023, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,7 +25,7 @@
  * @test
  * @summary Test behavior of isJavaIdentifierXX, testIsJavaLetter, and
  *  testIsJavaLetterOrDigit methods for all code points.
- * @bug 8218915
+ * @bug 8218915 8301400
  */
 
 public class TestIsJavaIdentifierMethods {
