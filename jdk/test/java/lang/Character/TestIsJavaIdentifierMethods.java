@@ -43,8 +43,8 @@ public class TestIsJavaIdentifierMethods {
     private static final int CJK_LEVEL1_END = 0x9FEF;
     // Extension E code points are greater than U+FFFF,
     // and thus only need to be tested for the int methods
-    private static final int CJK_E_LEVEL2_START = 0x2B8B8;
-    private static final int CJK_E_LEVEL2_END = 0x2CE93;
+    private static final int CJK_E_LEVEL2_START = 0x2B820;
+    private static final int CJK_E_LEVEL2_END = 0x2CEAF;
 
     public static void main(String[] args) {
         testIsJavaIdentifierPart_int();
