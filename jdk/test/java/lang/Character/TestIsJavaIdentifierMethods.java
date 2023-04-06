@@ -41,8 +41,8 @@ public class TestIsJavaIdentifierMethods {
     // GB18030_2022 Code Points
     private static final int CJK_LEVEL1_START = 0x9FCD;
     private static final int CJK_LEVEL1_END = 0x9FEF;
-    // Extension E code points have a width greater than 16,
-    // and thus need only be tested by the int methods
+    // Extension E code points have a width greater than 16 bits,
+    // and thus only need to be tested for the int methods
     private static final int CJK_E_LEVEL2_START = 0x2B8B8;
     private static final int CJK_E_LEVEL2_END = 0x2CE93;
 
