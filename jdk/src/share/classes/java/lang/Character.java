@@ -2578,7 +2578,7 @@ class Character implements java.io.Serializable, Comparable<Character> {
         /**
          * Constant for the "CJK Unified Ideographs Extension E" Unicode
          * character block.
-         * @apiNote This field is defined in Java SE Maintenance Release 5.
+         * @apiNote This field is defined in Java SE 8 Maintenance Release 5.
          * @since 1.8
          */
         public static final UnicodeBlock CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E =
